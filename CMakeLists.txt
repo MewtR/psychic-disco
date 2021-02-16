@@ -5,7 +5,7 @@ SET(CMAKE_CXX_COMPILER /usr/bin/clang++)
 project(doomaimer)
 find_package(ECM REQUIRED NO_MODULE) # Add ECM
 LIST(APPEND CMAKE_MODULE_PATH "${ECM_MODULE_PATH}") # Append ecm module path to  cmake module path
-find_package(XCB REQUIRED)
+find_package(XCB REQUIRED COMPONENTS XCB)
 
 add_executable(doomaimer main.cpp)
 
