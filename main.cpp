@@ -5,12 +5,13 @@ int main()
     xcb_connection_t *c;
     xcb_screen_t *screen;
     xcb_window_t win;
+    const xcb_setup_t* setup;
 
     /* open the connection to the X server */
     c = xcb_connect(NULL, NULL);
-
+    setup = xcb_get_setup(c);
     /* Get the first screen */
-    screen = xcb_setup_roots_iterator(xcb_get_setup(c)).data;
+    screen = xcb_setup_roots_iterator(setup).data;
 
     /* Ask for our window's Id*/
     win = xcb_generate_id(c);
