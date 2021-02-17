@@ -2,3 +2,4 @@ compile_commands.json
 doomaimer
 build
 .cache
+.gdb_history
