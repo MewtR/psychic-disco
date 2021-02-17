@@ -1,8 +1,5 @@
 #include "main.h"
 
-void print_wm_name(xcb_connection_t *, xcb_window_t);
-void get_children(xcb_connection_t *, xcb_window_t);
-
 int main()
 {
     xcb_connection_t *c;
@@ -16,7 +13,12 @@ int main()
     // Get the first screen 
     screen = xcb_setup_roots_iterator(setup).data;
 
-    get_children(c, screen->root);
+    std::vector<int> children = get_children(c, screen->root);
+    std::for_each(begin(children),end(children), [c](int child){
+            std::cout << "child window = " << child << std::endl;
+            print_wm_name(c, child);
+            });
+
     //print_wm_name(c, screen->root);
     /*
     // Ask for our window's Id
@@ -69,12 +71,14 @@ void print_wm_name(xcb_connection_t *c, xcb_window_t window)
     }
     free(reply);
 }
-void get_children(xcb_connection_t *c, xcb_window_t window)
+
+std::vector<int> get_children(xcb_connection_t *c, xcb_window_t window)
 {
     xcb_query_tree_cookie_t cookie;
     xcb_query_tree_reply_t* reply;
 
     cookie = xcb_query_tree(c, window);
+    std::vector<int> offspring;
     if((reply = xcb_query_tree_reply(c, cookie, NULL)))
     {
         printf("root = 0x%08x\n", reply->root);
@@ -83,10 +87,9 @@ void get_children(xcb_connection_t *c, xcb_window_t window)
         xcb_window_t *children = xcb_query_tree_children(reply);
         for (int i = 0; i < xcb_query_tree_children_length(reply); i++)
         {
-            //printf("child window = 0x%08x\n", children[i]);
-            std::cout << "child window = " << children[i] << std::endl;
-            print_wm_name(c, children[i]);
+            offspring.push_back(children[i]);
         }
         free(reply);
     }
+    return offspring;
 }
