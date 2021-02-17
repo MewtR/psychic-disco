@@ -6,7 +6,7 @@
 #include <vector>
 #include <algorithm>
 
-void print_wm_name(xcb_connection_t *, xcb_window_t);
+void print_property(xcb_connection_t *, xcb_window_t, xcb_atom_t);
 std::vector<int> get_children(xcb_connection_t *, xcb_window_t);
 
 #endif /* MAIN_H */

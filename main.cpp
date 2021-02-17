@@ -16,7 +16,7 @@ int main()
     std::vector<int> children = get_children(c, screen->root);
     std::for_each(begin(children),end(children), [c](int child){
             std::cout << "child window = " << child << std::endl;
-            print_wm_name(c, child);
+            print_property(c, child, XCB_ATOM_WM_CLASS);
             });
 
     //print_wm_name(c, screen->root);
@@ -45,13 +45,13 @@ int main()
     return 0;
 }
 
-void print_wm_name(xcb_connection_t *c, xcb_window_t window)
+void print_property(xcb_connection_t *c, xcb_window_t window, xcb_atom_t property)
 {
     xcb_get_property_cookie_t cookie;
     xcb_get_property_reply_t* reply;
 
     // These atoms are predefined in the X11 protocol. 
-    xcb_atom_t property = XCB_ATOM_WM_NAME;
+    //xcb_atom_t property = XCB_ATOM_WM_NAME;
     //xcb_atom_t property = XCB_ATOM_WM_CLASS;
     xcb_atom_t type = XCB_ATOM_STRING;
 
@@ -62,11 +62,11 @@ void print_wm_name(xcb_connection_t *c, xcb_window_t window)
         int len = xcb_get_property_value_length(reply);
         if (len == 0 && reply->length == 0)
         {
-            printf("Doesn't have a name \n");
+            printf("Doesn't the property you're looking for \n");
             free(reply);
             return;
         }
-        printf("WM_NAME is %.*s\n", len,
+        printf("Property is %.*s\n", len,
                 (char*) xcb_get_property_value(reply));
     }
     free(reply);
