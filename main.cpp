@@ -1,5 +1,4 @@
 #include "main.h"
-#include <xcb/xproto.h>
 
 void print_wm_name(xcb_connection_t *, xcb_window_t);
 void get_children(xcb_connection_t *, xcb_window_t);
@@ -61,7 +60,7 @@ void print_wm_name(xcb_connection_t *c, xcb_window_t window)
         int len = xcb_get_property_value_length(reply);
         if (len == 0 && reply->length == 0)
         {
-            printf("Didn't work lol\n");
+            printf("Doesn't have a name \n");
             free(reply);
             return;
         }
@@ -84,7 +83,9 @@ void get_children(xcb_connection_t *c, xcb_window_t window)
         xcb_window_t *children = xcb_query_tree_children(reply);
         for (int i = 0; i < xcb_query_tree_children_length(reply); i++)
         {
-            printf("child window = 0x%08x\n", children[i]);
+            //printf("child window = 0x%08x\n", children[i]);
+            std::cout << "child window = " << children[i] << std::endl;
+            print_wm_name(c, children[i]);
         }
         free(reply);
     }
