@@ -13,12 +13,15 @@ int main()
     // Get the first screen 
     screen = xcb_setup_roots_iterator(setup).data;
 
+    int firefox = get_child(c, screen->root, XCB_ATOM_WM_CLASS, "Navigator");
+    std::cout << "Firefox window id is: "<< firefox << std::endl;
+    /*
     std::vector<int> children = get_children(c, screen->root);
     std::for_each(begin(children),end(children), [c](int child){
             std::cout << "child window = " << child << std::endl;
-            print_property(c, child, XCB_ATOM_WM_CLASS);
+            get_property(c, child, XCB_ATOM_WM_CLASS);
             });
-
+            */
     //print_wm_name(c, screen->root);
     /*
     // Ask for our window's Id
@@ -42,11 +45,13 @@ int main()
     pause(); // hold client until Ctrl-C
     */
 
+    xcb_disconnect(c);
     return 0;
 }
 
-void print_property(xcb_connection_t *c, xcb_window_t window, xcb_atom_t property)
+std::string get_property(xcb_connection_t *c, xcb_window_t window, xcb_atom_t property)
 {
+    std::string result;
     xcb_get_property_cookie_t cookie;
     xcb_get_property_reply_t* reply;
 
@@ -64,12 +69,13 @@ void print_property(xcb_connection_t *c, xcb_window_t window, xcb_atom_t propert
         {
             printf("Doesn't the property you're looking for \n");
             free(reply);
-            return;
+            return result;
         }
-        printf("Property is %.*s\n", len,
-                (char*) xcb_get_property_value(reply));
+        result = std::string((char*) xcb_get_property_value(reply));
+        printf("Property is %.*s\n", len, result.c_str());
     }
     free(reply);
+    return result;
 }
 
 std::vector<int> get_children(xcb_connection_t *c, xcb_window_t window)
@@ -92,4 +98,20 @@ std::vector<int> get_children(xcb_connection_t *c, xcb_window_t window)
         free(reply);
     }
     return offspring;
+}
+xcb_window_t get_child(xcb_connection_t *connection, xcb_window_t window, xcb_atom_t property, std::string match)
+{
+    xcb_window_t child;
+    std::string m;
+    std::vector<int> children = get_children(connection, window);
+    std::for_each(begin(children),end(children), [connection, property, &m, match, &child](int c){
+            std::cout << "child window = " << c << std::endl;
+            m = get_property(connection, c, property);
+            if(m == match){
+            child = c;
+            return;
+            }
+            });
+
+    return child;
 }
