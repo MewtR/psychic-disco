@@ -1,5 +1,4 @@
 #include "main.h"
-#include <memory>
 
 int main()
 {
@@ -22,7 +21,9 @@ int main()
     std::cout << "Window's x: " << geometry->x << std::endl;
     std::cout << "Window's y: " << geometry->y << std::endl;
 
-    std::shared_ptr<xcb_get_image_reply_t> image = get_image(c, firefox, geometry);
+    std::shared_ptr<xcb_get_image_reply_t> image = get_image(c, screen->root, geometry);
+    int len = xcb_get_image_data_length(image.get());
+    std::cout << "Length of image???? " << len << std::endl;
     xcb_disconnect(c);
     return 0;
 }
@@ -31,7 +32,7 @@ std::string get_property(xcb_connection_t *c, xcb_window_t window, xcb_atom_t pr
 {
     std::string result;
     xcb_get_property_cookie_t cookie;
-    xcb_get_property_reply_t* reply;
+    std::shared_ptr<xcb_get_property_reply_t> reply;
 
     // These atoms are predefined in the X11 protocol. 
     //xcb_atom_t property = XCB_ATOM_WM_NAME;
@@ -40,42 +41,39 @@ std::string get_property(xcb_connection_t *c, xcb_window_t window, xcb_atom_t pr
 
     cookie = xcb_get_property(c, 0, window, property, type, 0, 100);
 
-    if ((reply = xcb_get_property_reply(c, cookie, nullptr)))
+    if ((reply = std::shared_ptr<xcb_get_property_reply_t>(xcb_get_property_reply(c, cookie, nullptr), free)))
     {
-        int len = xcb_get_property_value_length(reply);
+        int len = xcb_get_property_value_length(reply.get());
         if (len == 0 && reply->length == 0)
         {
             printf("Doesn't the property you're looking for \n");
-            free(reply);
             return result;
         }
-        result = std::string((char*) xcb_get_property_value(reply));
+        result = std::string((char*) xcb_get_property_value(reply.get()));
         printf("Property is %.*s\n", len, result.c_str());
     }
-    free(reply);
     return result;
 }
 
 std::vector<int> get_children(xcb_connection_t *c, xcb_window_t window)
 {
     xcb_query_tree_cookie_t cookie;
-    xcb_query_tree_reply_t* reply;
+    std::shared_ptr<xcb_query_tree_reply_t> reply;
 
     cookie = xcb_query_tree(c, window);
     std::vector<int> offspring;
-    if((reply = xcb_query_tree_reply(c, cookie, nullptr)))
+    if((reply = std::shared_ptr<xcb_query_tree_reply_t>(xcb_query_tree_reply(c, cookie, nullptr), free)))
     {
         printf("root = 0x%08x\n", reply->root);
         printf("parent = 0x%08x\n", reply->parent);
 
-        xcb_window_t *children = xcb_query_tree_children(reply);
-        int len = xcb_query_tree_children_length(reply);
+        xcb_window_t *children = xcb_query_tree_children(reply.get());
+        int len = xcb_query_tree_children_length(reply.get());
         for (int i = 0; i < len; i++)
         {
             offspring.push_back(children[i]);
         }
     }
-    free(reply);
     return offspring;
 }
 xcb_window_t get_child(xcb_connection_t *connection, xcb_window_t window, xcb_atom_t property, std::string match)
