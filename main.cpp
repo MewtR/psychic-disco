@@ -1,4 +1,5 @@
 #include "main.h"
+#include <memory>
 
 int main()
 {
@@ -20,6 +21,8 @@ int main()
     std::cout << "Window's height: " << geometry->height << std::endl;
     std::cout << "Window's x: " << geometry->x << std::endl;
     std::cout << "Window's y: " << geometry->y << std::endl;
+
+    std::shared_ptr<xcb_get_image_reply_t> image = get_image(c, firefox, geometry);
     xcb_disconnect(c);
     return 0;
 }
@@ -102,4 +105,10 @@ std::shared_ptr<xcb_get_geometry_reply_t> get_geometry(xcb_connection_t *connect
     xcb_get_geometry_cookie_t cookie = xcb_get_geometry(connection,window); 
     //Construct a shared pointer with 'free' as the deleter
     return std::shared_ptr<xcb_get_geometry_reply_t>  (xcb_get_geometry_reply(connection,cookie, nullptr), free);
+}
+
+std::shared_ptr<xcb_get_image_reply_t> get_image(xcb_connection_t *connection, xcb_window_t window,std::shared_ptr<xcb_get_geometry_reply_t> geometry)
+{
+    xcb_get_image_cookie_t cookie = xcb_get_image(connection, XCB_IMAGE_FORMAT_Z_PIXMAP, window, geometry->x, geometry->y, geometry->width, geometry->height, static_cast<uint32_t>(~0));
+    return std::shared_ptr<xcb_get_image_reply_t>(xcb_get_image_reply(connection, cookie, nullptr), free);
 }
