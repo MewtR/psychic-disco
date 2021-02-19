@@ -13,13 +13,16 @@ int main()
     // Get the first screen 
     screen = xcb_setup_roots_iterator(setup).data;
 
-    int firefox = get_child(c, screen->root, XCB_ATOM_WM_CLASS, "Navigator");
+    xcb_window_t firefox = get_child(c, screen->root, XCB_ATOM_WM_CLASS, "Navigator");
     std::cout << "Firefox window id is: "<< firefox << std::endl;
     std::shared_ptr<xcb_get_geometry_reply_t> geometry = get_geometry(c,firefox);
     std::cout << "Window's width: " << geometry->width << std::endl;
     std::cout << "Window's height: " << geometry->height << std::endl;
     std::cout << "Window's x: " << geometry->x << std::endl;
     std::cout << "Window's y: " << geometry->y << std::endl;
+    
+    std::shared_ptr<xcb_composite_query_version_reply_t> version = get_composite_query_version(c, 1, 14);
+    std::cout << "Version is " << version->major_version << "." << version->minor_version << std::endl;
 
     std::shared_ptr<xcb_get_image_reply_t> image = get_image(c, screen->root, geometry);
     int len = xcb_get_image_data_length(image.get());
@@ -109,4 +112,13 @@ std::shared_ptr<xcb_get_image_reply_t> get_image(xcb_connection_t *connection, x
 {
     xcb_get_image_cookie_t cookie = xcb_get_image(connection, XCB_IMAGE_FORMAT_Z_PIXMAP, window, geometry->x, geometry->y, geometry->width, geometry->height, static_cast<uint32_t>(~0));
     return std::shared_ptr<xcb_get_image_reply_t>(xcb_get_image_reply(connection, cookie, nullptr), free);
+}
+
+std::shared_ptr<xcb_composite_query_version_reply_t> get_composite_query_version(xcb_connection_t *connection, int major, int minor)
+{
+    
+    xcb_composite_query_version_cookie_t comp_ver_cookie = xcb_composite_query_version(connection, major, minor);
+
+    return std::shared_ptr<xcb_composite_query_version_reply_t>(xcb_composite_query_version_reply(connection, comp_ver_cookie, nullptr), free);
+
 }

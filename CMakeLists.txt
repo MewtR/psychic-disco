@@ -5,7 +5,7 @@ SET(CMAKE_CXX_FLAGS "-g -O0")
 project(doomaimer)
 find_package(ECM REQUIRED NO_MODULE) # Add ECM
 LIST(APPEND CMAKE_MODULE_PATH "${ECM_MODULE_PATH}") # Append ecm module path to  cmake module path
-find_package(XCB REQUIRED COMPONENTS XCB)
+find_package(XCB REQUIRED COMPONENTS XCB XFIXES COMPOSITE)
 
 add_executable(doomaimer main.cpp)
 
