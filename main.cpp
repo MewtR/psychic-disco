@@ -1,5 +1,4 @@
 #include "main.h"
-#include <xcb/composite.h>
 
 int main()
 {
@@ -31,9 +30,24 @@ int main()
     //xcb_composite_name_window_pixmap(c, firefox, ff_pixmap);
 
     std::shared_ptr<xcb_get_image_reply_t> image = get_image(c, firefox, geometry);
+    // image length
     int len = xcb_get_image_data_length(image.get());
     std::cout << "Length of image???? " << len << std::endl;
+    // Image data. Not something that can be freed, lives on the stack apparently
+    std::shared_ptr<u_int8_t> data (xcb_get_image_data(image.get()), [](uint8_t*){}); // empty deleter
+    // Image end
+    xcb_generic_iterator_t end = xcb_get_image_data_end(image.get());
+    std::cout << "Printing out my pixels yall" << std::endl;
+    
+    uint8_t* it = data.get();
+    while(it != end.data)
+    {
+        std::cout << *it << " ";
+        it++;
+    }
+    
     xcb_disconnect(c);
+
     return 0;
 }
 
