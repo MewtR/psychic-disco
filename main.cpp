@@ -42,7 +42,7 @@ int main()
     uint8_t* it = data.get();
     while(it != end.data)
     {
-        std::cout << *it << " ";
+        std::cout << static_cast<int>(*it) << " ";
         it++;
     }
     
