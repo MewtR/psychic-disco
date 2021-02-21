@@ -16,8 +16,6 @@ int main()
     xcb_window_t firefox = get_child(c, screen->root, XCB_ATOM_WM_CLASS, "Navigator");
     std::cout << "Firefox window id is: "<< firefox << std::endl;
     std::shared_ptr<xcb_get_geometry_reply_t> geometry = get_geometry(c,firefox);
-    std::cout << "Window's width: " << geometry->width << std::endl;
-    std::cout << "Window's height: " << geometry->height << std::endl;
     std::cout << "Window's x: " << geometry->x << std::endl;
     std::cout << "Window's y: " << geometry->y << std::endl;
     
@@ -32,7 +30,6 @@ int main()
     std::shared_ptr<xcb_get_image_reply_t> image = get_image(c, firefox, geometry);
     // image length
     int len = xcb_get_image_data_length(image.get());
-    std::cout << "Length of image???? " << len << std::endl;
     // Image data. Not something that can be freed, lives on the stack apparently
     std::shared_ptr<u_int8_t> data (xcb_get_image_data(image.get()), [](uint8_t*){}); // empty deleter
     // Image end
@@ -45,7 +42,11 @@ int main()
         std::cout << static_cast<int>(*it) << " ";
         it++;
     }
+    std::cout << std::endl;
     
+    std::cout << "Window's width: " << geometry->width << std::endl;
+    std::cout << "Window's height: " << geometry->height << std::endl;
+    std::cout << "Length of image " << len << std::endl;
     xcb_disconnect(c);
 
     return 0;
