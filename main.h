@@ -7,6 +7,7 @@
 #include <vector>
 #include <algorithm>
 #include <memory>
+#include <Magick++.h>
 
 std::string get_property(xcb_connection_t *, xcb_window_t, xcb_atom_t);
 std::vector<int> get_children(xcb_connection_t *, xcb_window_t);

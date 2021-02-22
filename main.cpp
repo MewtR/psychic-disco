@@ -1,12 +1,14 @@
 #include "main.h"
 
-int main()
+int main(int argc, char **argv)
 {
     xcb_connection_t *c;
     xcb_screen_t *screen;
     xcb_window_t win;
     const xcb_setup_t* setup;
 
+    // Initialize ImageMagick lib
+    Magick::InitializeMagick(*argv);
     // open the connection to the X server 
     c = xcb_connect(nullptr, nullptr);
     setup = xcb_get_setup(c);
