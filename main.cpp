@@ -49,6 +49,11 @@ int main(int argc, char **argv)
     std::cout << "Window's width: " << geometry->width << std::endl;
     std::cout << "Window's height: " << geometry->height << std::endl;
     std::cout << "Length of image " << len << std::endl;
+
+    Magick::Image final_image;
+    final_image.read(geometry->width, geometry->height, "BGRA", Magick::CharPixel, data.get()); // Can't use 'it' here because I incremented it to print
+    final_image.write("firefox.png");
+    //final_image.read();
     xcb_disconnect(c);
 
     return 0;

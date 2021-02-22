@@ -3,3 +3,4 @@ doomaimer
 build
 .cache
 .gdb_history
+*.png
