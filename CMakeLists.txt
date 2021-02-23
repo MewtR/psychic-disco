@@ -23,7 +23,7 @@ string(STRIP "${MAGICK_LD_FLAGS}" MAGICK_LD_FLAGS)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${MAGICK_CXX_FLAGS}")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${MAGICK_LD_FLAGS}")
 
-add_executable(doomaimer main.cpp)
+add_executable(doomaimer main.cpp xcb_functions.cpp)
 
 target_link_libraries(doomaimer ${XCB_LIBRARIES}) #${ImageMagick_LIBRARIES})
 target_include_directories(doomaimer PRIVATE ${XCB_INCULDE_DIRS}) #${ImageMagick_INCLUDE_DIRS})
