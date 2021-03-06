@@ -1,4 +1,6 @@
 #include "xcb_functions.h"
+#include <memory>
+#include <xcb/xproto.h>
 
 std::string get_property(xcb_connection_t *c, xcb_window_t window, xcb_atom_t property)
 {
@@ -89,5 +91,4 @@ std::shared_ptr<xcb_composite_query_version_reply_t> get_composite_query_version
     xcb_composite_query_version_cookie_t comp_ver_cookie = xcb_composite_query_version(connection, major, minor);
 
     return std::shared_ptr<xcb_composite_query_version_reply_t>(xcb_composite_query_version_reply(connection, comp_ver_cookie, nullptr), free);
-
 }
