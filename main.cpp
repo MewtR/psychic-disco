@@ -27,7 +27,18 @@ int main(int argc, char **argv)
     std::cout << "Window's y: " << geometry->y << std::endl;
 
     std::shared_ptr<xcb_get_window_attributes_reply_t> attributes = get_attributes(c, firefox);
-    std::cout << "Map state: " << attributes->map_state << std::endl; // doesn't print anything but value is '2' in gdb
+    std::cout << "Map state: " << attributes->map_state; /* xcb_map_state_t */ // doesn't print anything but value is '2' in gdb
+
+    if(attributes->map_state == XCB_MAP_STATE_VIEWABLE) std::cout << "Viewable" << std::endl;
+    else if(attributes->map_state == XCB_MAP_STATE_UNVIEWABLE) std::cout << "Unviewable" << std::endl;
+    else if(attributes->map_state == XCB_MAP_STATE_UNMAPPED) {
+        /*
+        xcb_map_window(c, firefox);
+        xcb_flush(c);
+        */
+        std::cout << "Unmapped" << std::endl;
+        return -1; // Haven't figured out how to solve this issue yet.
+    }
 
     
     //xcb_composite_redirect_window(c, firefox, XCB_COMPOSITE_REDIRECT_AUTOMATIC);
