@@ -1,6 +1,5 @@
 #include "main.h"
-#include <xcb/composite.h>
-#include <xcb/xproto.h>
+#include "xcb_functions.h"
 
 int main(int argc, char **argv)
 {
@@ -26,6 +25,9 @@ int main(int argc, char **argv)
     std::shared_ptr<xcb_get_geometry_reply_t> geometry = get_geometry(c,firefox);
     std::cout << "Window's x: " << geometry->x << std::endl;
     std::cout << "Window's y: " << geometry->y << std::endl;
+
+    std::shared_ptr<xcb_get_window_attributes_reply_t> attributes = get_attributes(c, firefox);
+    std::cout << "Map state: " << attributes->map_state << std::endl; // doesn't print anything but value is '2' in gdb
 
     
     //xcb_composite_redirect_window(c, firefox, XCB_COMPOSITE_REDIRECT_AUTOMATIC);

@@ -92,3 +92,8 @@ std::shared_ptr<xcb_composite_query_version_reply_t> get_composite_query_version
 
     return std::shared_ptr<xcb_composite_query_version_reply_t>(xcb_composite_query_version_reply(connection, comp_ver_cookie, nullptr), free);
 }
+std::shared_ptr<xcb_get_window_attributes_reply_t> get_attributes(xcb_connection_t* connection, xcb_window_t window)
+{
+    xcb_get_window_attributes_cookie_t cookie = xcb_get_window_attributes(connection, window);
+    return std::shared_ptr<xcb_get_window_attributes_reply_t>(xcb_get_window_attributes_reply(connection, cookie, nullptr), free);
+}
